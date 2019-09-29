@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import animation
+from IPython.display import HTML
 
 fig = plt.figure(figsize=(5,5))
 ax = plt.gca()
@@ -95,3 +97,24 @@ pi_0 = simple_convert_into_pi_from_theta(theta_0)
 state_history = goal_maze(pi_0)
 
 print(state_history)
+
+
+def init():
+    line.set_data([],[])
+    return (line,)
+
+
+def animate(i):
+    state = state_history[i]
+    x = (state % 3) + 0.5
+    y = 2.5 - int(state / 3)
+    line.set_data(x,y)
+    return (line,)
+
+
+anim = animation.FuncAnimation(fig, animate,
+                               init_func=init, frames=len(state_history),
+                               interval=200, repeat=False)
+
+HTML(anim.to_jshtml())
+
