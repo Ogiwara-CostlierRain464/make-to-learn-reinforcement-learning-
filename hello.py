@@ -28,12 +28,11 @@ plt.tick_params(axis="both",which="both",bottom="off",top="off",
 
 line, = ax.plot([0.5],[2.5],marker="o",color="g",markersize=60)
 
-
 plt.show()
-'''
+
 theta_0 = np.array([
     [np.nan, 1, 1, np.nan],
-    [np.nan, 1, 1, np.nan, 1],
+    [np.nan, 1, np.nan, 1],
     [np.nan, np.nan, 1, 1],
     [1, 1, 1, np.nan],
     [np.nan, np.nan, 1, 1],
@@ -42,10 +41,10 @@ theta_0 = np.array([
     [1, 1, np.nan, np.nan],
 ])
 
-
+# 方策パラメータthetaを行動方策piに変換する関数の定義
 def simple_convert_into_pi_from_theta(theta):
 
-    (m, n) = theta.shape
+    [m, n] = theta.shape
     pi = np.zeros((m, n))
     for i in range(0, m):
         pi[i, :] = theta[i, :] / np.nansum(theta[i, :])
@@ -55,5 +54,44 @@ def simple_convert_into_pi_from_theta(theta):
     return pi
 
 
+# 1step移動後の状態sを求める関数を定義
+def get_next_s(pi,s):
+    direction = ["up","right","down","left"]
+
+    # pi[s,:]の確率にしたがって、directionが選択される
+    next_direction = np.random.choice(direction,p=pi[s,:])
+
+    if next_direction == "up":
+        s_next = s - 3
+    elif next_direction == "right":
+        s_next = s + 1
+    elif next_direction == "down":
+        s_next = s + 3
+    elif next_direction == "left":
+        s_next = s - 1
+
+    return s_next
+
+
+# 迷路内をエージェントがゴールするまで移動させる関数の定義
+def goal_maze(pi):
+    s = 0
+    state_history = [0]
+
+    while(1):
+        next_s = get_next_s(pi,s)
+        state_history.append(next_s)
+
+        # if goal
+        if next_s == 8:
+            break
+        else:
+            s = next_s
+
+    return state_history
+
+
 pi_0 = simple_convert_into_pi_from_theta(theta_0)
-'''
+state_history = goal_maze(pi_0)
+
+print(state_history)
