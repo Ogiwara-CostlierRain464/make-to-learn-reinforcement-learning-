@@ -64,7 +64,7 @@ class Brain:
     def __init__(self, num_states, num_actions):
         # CartPoleの行動(左右に押す) の2を取得
         self.num_actions = num_actions
-        # Qテーブルを作成。
+        # 連続一様分布から、ランダムなQテーブルを作成。
         # 行数は状態を分割数^(4変数)にデジタル変換した値、列数は行動数を表す
         self.q_table = np.random.uniform(
             low=0,
@@ -108,15 +108,15 @@ class Brain:
 class Environment:
     def __init__(self):
         self.env = gym.make(ENV)
-        # 課題の状態の数4を取得
+        # CartPoleが持つ状態変数の数(P81の)である4を示す
         num_states = self.env.observation_space.shape[0]
-        # CartPoleの行動の2を取得
+        # CartPoleが持つ行動の数(左右)である2を示す
         num_actions = self.env.action_space.n
 
         self.agent = Agent(num_states, num_actions)
 
     def run(self):
-        # 195step以上連続でたち続けた試行数
+        # 195step以上連続で立ち続けた試行数
         complete_episodes = 0
         is_episode_final = False
         frames = []
