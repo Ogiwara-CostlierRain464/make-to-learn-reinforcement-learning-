@@ -12,7 +12,6 @@ def display_frames_as_git(frames):
             frames[0].shape[1] / 72,
             frames[0].shape[0] / 72
         ),
-        dpi=72
     )
     patch = plt.imshow(frames[0])
     plt.axis("off")
