@@ -10,6 +10,10 @@ from collections import namedtuple
 from matplotlib import animation
 from IPython.display import display
 from JSAnimation.IPython_display import display_animation
+import warnings
+
+# PyTorch内のwarnを非表示に
+warnings.filterwarnings("ignore")
 
 
 def display_frames_as_gif(frames):
@@ -163,13 +167,16 @@ class Brain:
     def decide_action(self, state, episode):
         """現在の状態に応じて、行動を決定する"""
         # ε-greedy法で徐々に最適行動のみを採用する
+        # episodeがだんだん大きくなるので、epsilonはだんだん小さくなる
         epsilon = 0.5 * (1 / (episode + 1))
 
         if epsilon <= np.random.uniform(0, 1):
             self.model.eval()
+            # 微分は推論では必要ない
             with torch.no_grad():
                 action = self.model(state).max(1)[1].view(1, 1)
         else:
+            # 0,1の行動をランダムに返す「
             action = torch.LongTensor([[random.randrange(self.num_actions)]])
 
         return action
@@ -196,9 +203,9 @@ class Agent:
 class Environment:
     def __init__(self):
         self.env = gym.make(ENV)
-        self.num_states = self.env.observation_space.shape[0]
-        self.num_actions = self.env.action_space.n
-        self.agent = Agent(self.num_states, self.num_actions)
+        num_states = self.env.observation_space.shape[0]
+        num_actions = self.env.action_space.n
+        self.agent = Agent(num_states, num_actions)
 
     def run(self):
         # 10試行分のたち続けたstep数を格納し、平均ステップ数を出力に利用
@@ -215,6 +222,7 @@ class Environment:
             state = observation
             state = torch.from_numpy(state).type(torch.FloatTensor)
 
+            # flattenにするだけ
             state = torch.unsqueeze(state, 0)
 
             for step in range(MAX_STEPS):

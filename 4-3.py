@@ -42,3 +42,4 @@ print(model)
 # 重みを学習する際の最適化手法
 loss_fn = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.01)
+
