@@ -2,3 +2,4 @@
 *.mp4
 openml
 *.csv
+.ipynb_checkpoints
